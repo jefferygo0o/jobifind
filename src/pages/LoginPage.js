@@ -1,7 +1,6 @@
 // src/pages/LoginPage.js
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +11,7 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await login(auth, email, password);
       navigate("/dashboard");
     } catch (error) {
       alert(error.message);

@@ -1,8 +1,7 @@
 // src/pages/SignupPage.js
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../utils/firebase";
+import { signup } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
@@ -12,7 +11,7 @@ const SignupPage = () => {
 
   const handleSignup = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await signup(email, password);
       navigate("/dashboard");
     } catch (error) {
       alert(error.message);

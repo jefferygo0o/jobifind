@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {

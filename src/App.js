@@ -5,7 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Dashboard from "./pages/Dashboard";
 
-function App() {
+function MyApp() {
   return (
     <Router>
       <Routes>
@@ -17,4 +17,4 @@ function App() {
   );
 }
 
-export default App;
+export default MyApp;

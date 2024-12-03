@@ -14,7 +14,7 @@ const firebaseConfig = {
 };
 
 
-alert(firebaseConfig);
+alert(firebaseConfig.apiKey);
 // Check if Firebase is already initialized
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 

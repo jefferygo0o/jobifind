@@ -31,6 +31,7 @@ export const fetchJobData = async (filters = {}) => {
 
     return response.data.results; // Return the list of job results from the API
   } catch (error) {
+    alert(error);
     console.error('Error fetching jobs from Adzuna:', error);
     return [];
   }

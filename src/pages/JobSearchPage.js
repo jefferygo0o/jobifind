@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { searchJobs, fetchJobData } from "../utils/api";
+import { fetchJobData } from "../utils/api";
 import JobCard from "../components/JobCard";
 import { addFavoriteJob, removeFavoriteJob, getFavorites } from "../utils/firebase";
 
@@ -29,8 +29,11 @@ const JobSearchPage = () => {
   const [remoteOnly, setRemoteOnly] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
-    category: '',
+    query: '',
     location: '',
+    salaryMin: '',
+    remoteOnly: false,
+    category: '',
     salary: '',
     jobType: ''
   });
@@ -54,7 +57,7 @@ const JobSearchPage = () => {
     setLoading(true);
     setJobs([]); // Reset jobs on each new search
     try {
-      const results = await searchJobs(query, location, salaryMin, remoteOnly);
+      const results = await fetchJobData(filters); // Pass filters into API
       setJobs(results);
     } catch (error) {
       alert("Error fetching jobs. Please try again.");
@@ -64,11 +67,18 @@ const JobSearchPage = () => {
   };
 
   const fetchMoreJobs = async () => {
-    const newJobs = await fetchJobData(filters); // Use the current filters to fetch more jobs
-    if (newJobs.length === 0) {
-      setHasMore(false);
+    setLoading(true);
+    try {
+      const newJobs = await fetchJobData(filters); // Fetch more jobs based on current filters
+      if (newJobs.length === 0) {
+        setHasMore(false);
+      }
+      setJobs((prevJobs) => [...prevJobs, ...newJobs]);
+    } catch (error) {
+      console.error('Error fetching more jobs:', error);
+    } finally {
+      setLoading(false);
     }
-    setJobs((prevJobs) => [...prevJobs, ...newJobs]);
   };
 
   const handleFilterChange = (e) => {
@@ -91,7 +101,9 @@ const JobSearchPage = () => {
   };
 
   useEffect(() => {
-    fetchMoreJobs(); // Initial job fetch
+    if (filters.query || filters.location || filters.salaryMin || filters.remoteOnly) {
+      handleSearch(); // Fetch jobs whenever filters are updated
+    }
   }, [filters]);
 
   return (
@@ -105,16 +117,16 @@ const JobSearchPage = () => {
           <TextField
             label="Job Title or Keywords"
             fullWidth
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            value={filters.query}
+            onChange={(e) => setFilters({ ...filters, query: e.target.value })}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
             label="Location"
             fullWidth
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            value={filters.location}
+            onChange={(e) => setFilters({ ...filters, location: e.target.value })}
           />
         </Grid>
 
@@ -123,8 +135,8 @@ const JobSearchPage = () => {
             label="Minimum Salary"
             type="number"
             fullWidth
-            value={salaryMin}
-            onChange={(e) => setSalaryMin(e.target.value)}
+            value={filters.salaryMin}
+            onChange={(e) => setFilters({ ...filters, salaryMin: e.target.value })}
           />
         </Grid>
 
@@ -132,8 +144,8 @@ const JobSearchPage = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={remoteOnly}
-                onChange={(e) => setRemoteOnly(e.target.checked)}
+                checked={filters.remoteOnly}
+                onChange={(e) => setFilters({ ...filters, remoteOnly: e.target.checked })}
               />
             }
             label="Remote Only"

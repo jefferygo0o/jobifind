@@ -23,11 +23,6 @@ import JobCard from "../components/JobCard";
 import { addFavoriteJob, removeFavoriteJob, getFavorites } from "../utils/firebase";
 
 const JobSearchPage = () => {
-  const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
-  const [salaryMin, setSalaryMin] = useState("");
-  const [remoteOnly, setRemoteOnly] = useState(false);
-  const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
     query: '',
     location: '',
@@ -37,6 +32,7 @@ const JobSearchPage = () => {
     salary: '',
     jobType: ''
   });
+  const [jobs, setJobs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [favorites, setFavorites] = useState({});
   const [loading, setLoading] = useState(false);
@@ -117,16 +113,18 @@ const JobSearchPage = () => {
           <TextField
             label="Job Title or Keywords"
             fullWidth
+            name="query"
             value={filters.query}
-            onChange={(e) => setFilters({ ...filters, query: e.target.value })}
+            onChange={handleFilterChange}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
             label="Location"
             fullWidth
+            name="location"
             value={filters.location}
-            onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+            onChange={handleFilterChange}
           />
         </Grid>
 
@@ -135,8 +133,9 @@ const JobSearchPage = () => {
             label="Minimum Salary"
             type="number"
             fullWidth
+            name="salaryMin"
             value={filters.salaryMin}
-            onChange={(e) => setFilters({ ...filters, salaryMin: e.target.value })}
+            onChange={handleFilterChange}
           />
         </Grid>
 
@@ -164,22 +163,6 @@ const JobSearchPage = () => {
               <MenuItem value="technology">Technology</MenuItem>
               <MenuItem value="finance">Finance</MenuItem>
               <MenuItem value="marketing">Marketing</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item xs={12} md={3}>
-          <FormControl fullWidth>
-            <InputLabel>Location</InputLabel>
-            <Select
-              name="location"
-              value={filters.location}
-              onChange={handleFilterChange}
-              label="Location"
-            >
-              <MenuItem value="London">London</MenuItem>
-              <MenuItem value="Manchester">Manchester</MenuItem>
-              <MenuItem value="Remote">Remote</MenuItem>
             </Select>
           </FormControl>
         </Grid>

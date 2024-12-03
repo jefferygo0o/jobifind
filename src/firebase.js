@@ -1,7 +1,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getDatabase, ref, set, remove, get, child } from "firebase/database";
-import { getStorage } from "firebase/storage";
+import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -52,6 +52,13 @@ export const getFavorites = async () => {
   if (!userId) throw new Error("User not logged in");
   const snapshot = await get(child(ref(db), `favorites/${userId}`));
   return snapshot.exists() ? snapshot.val() : {};
+};
+
+// Resume upload function
+export const uploadResume = async (file) => {
+  const storageRefPath = storageRef(storage, 'resumes/' + file.name);
+  await uploadBytes(storageRefPath, file);
+  alert('Resume uploaded successfully');
 };
 
 // Export Firebase instances

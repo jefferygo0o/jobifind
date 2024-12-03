@@ -13,6 +13,8 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
+
+alert(firebaseConfig);
 // Check if Firebase is already initialized
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 

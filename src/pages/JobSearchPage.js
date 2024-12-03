@@ -19,8 +19,7 @@ import {
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchJobData } from "../utils/api";
-import JobCard from "../components/JobCard";
-import { addFavoriteJob, removeFavoriteJob, getFavorites } from "../utils/firebase";
+import { applyForJob, getAppliedJobs } from "../utils/firebase";
 
 const JobSearchPage = () => {
   const [filters, setFilters] = useState({
@@ -40,7 +39,7 @@ const JobSearchPage = () => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const favorites = await getFavorites();
+        const favorites = await getAppliedJobs();
         setFavorites(favorites);
       } catch (error) {
         console.error("Error fetching favorites:", error);
@@ -82,25 +81,14 @@ const JobSearchPage = () => {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const toggleFavorite = async (job) => {
-    if (favorites[job.id]) {
-      await removeFavoriteJob(job.id);
-      setFavorites((prev) => {
-        const updated = { ...prev };
-        delete updated[job.id];
-        return updated;
-      });
-    } else {
-      await addFavoriteJob(job);
-      setFavorites((prev) => ({ ...prev, [job.id]: job }));
+  const handleApplyForJob = async (jobId) => {
+    try {
+      await applyForJob(jobId);
+      alert("Job application submitted.");
+    } catch (error) {
+      console.error("Error applying for job:", error);
     }
   };
-
-  useEffect(() => {
-    if (filters.query || filters.location || filters.salaryMin || filters.remoteOnly) {
-      handleSearch(); // Fetch jobs whenever filters are updated
-    }
-  }, [filters]);
 
   return (
     <Box sx={{ mt: 5 }}>
@@ -176,9 +164,8 @@ const JobSearchPage = () => {
               onChange={handleFilterChange}
               label="Salary"
             >
-              <MenuItem value="20000-30000">£20,000 - £30,000</MenuItem>
-              <MenuItem value="30000-50000">£30,000 - £50,000</MenuItem>
-              <MenuItem value="50000+">£50,000+</MenuItem>
+              <MenuItem value="30000-40000">£30,000 - £40,000</MenuItem>
+              <MenuItem value="40000-50000">£40,000 - £50,000</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -192,50 +179,54 @@ const JobSearchPage = () => {
               onChange={handleFilterChange}
               label="Job Type"
             >
-              <MenuItem value="full-time">Full-Time</MenuItem>
-              <MenuItem value="part-time">Part-Time</MenuItem>
-              <MenuItem value="remote">Remote</MenuItem>
+              <MenuItem value="full-time">Full Time</MenuItem>
+              <MenuItem value="part-time">Part Time</MenuItem>
+              <MenuItem value="contract">Contract</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-
-        <Grid item xs={12} mt={2}>
-          <Button variant="contained" onClick={handleSearch} disabled={loading}>
-            {loading ? "Searching..." : "Search"}
-          </Button>
-        </Grid>
       </Grid>
+
+      <Box sx={{ mt: 3 }}>
+        <Button variant="contained" color="primary" onClick={handleSearch} fullWidth>
+          Search Jobs
+        </Button>
+      </Box>
 
       <InfiniteScroll
         dataLength={jobs.length}
         next={fetchMoreJobs}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
-        endMessage={<p>No more jobs to display.</p>}
+        endMessage={<p>No more jobs to load</p>}
       >
-        <Grid container spacing={2} sx={{ mt: 4 }}>
+        <Grid container spacing={2} sx={{ mt: 3 }}>
           {jobs.map((job) => (
             <Grid item xs={12} sm={6} md={4} key={job.id}>
               <Card>
                 <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {job.title}
+                  <Typography variant="h6">{job.title}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {job.company.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {job.company} - {job.location}
+                  <Typography variant="body2" color="textSecondary">
+                    {job.location.display_name}
                   </Typography>
-                  {job.salary_min && (
-                    <Typography variant="body2">
-                      Salary: £{job.salary_min} - £{job.salary_max}
-                    </Typography>
-                  )}
                 </CardContent>
                 <CardActions>
-                  <IconButton onClick={() => toggleFavorite(job)} color="primary">
+                  <IconButton
+                    onClick={() => handleApplyForJob(job.id)}
+                    color={favorites[job.id] ? "primary" : "default"}
+                  >
                     {favorites[job.id] ? <Favorite /> : <FavoriteBorder />}
                   </IconButton>
-                  <Button size="small" href={job.redirect_url} target="_blank">
-                    Apply
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleApplyForJob(job.id)}
+                    fullWidth
+                  >
+                    Apply Now
                   </Button>
                 </CardActions>
               </Card>

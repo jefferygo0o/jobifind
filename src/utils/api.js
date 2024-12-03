@@ -43,6 +43,7 @@ export const fetchJobData = async (filters = {}) => {
     return [];
   }
 };
+
 /**
  * Add a job to the user's applied jobs list in Firebase Realtime Database
  */

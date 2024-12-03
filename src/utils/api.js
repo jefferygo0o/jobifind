@@ -29,14 +29,20 @@ export const fetchJobData = async (filters = {}) => {
       params: queryParams,
     });
 
+    console.log('Response:', response);
     return response.data.results; // Return the list of job results from the API
   } catch (error) {
-    alert(error);
     console.error('Error fetching jobs from Adzuna:', error);
+    if (error.response) {
+      console.error('Response error:', error.response);
+    } else if (error.request) {
+      console.error('Request error:', error.request);
+    } else {
+      console.error('Error message:', error.message);
+    }
     return [];
   }
 };
-
 /**
  * Add a job to the user's applied jobs list in Firebase Realtime Database
  */

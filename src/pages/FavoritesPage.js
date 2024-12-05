@@ -8,7 +8,7 @@ import {
   Grid,
 } from "@mui/material";
 import { getFavorites, removeFavoriteJob } from "../utils/firebase";
-
+import GradioClientComponent from "../components/GradioClientComponent"
 const FavoritesPage = () => {
   const [favorites, setFavorites] = useState([]);
 
@@ -30,6 +30,7 @@ const FavoritesPage = () => {
       <Typography variant="h4" gutterBottom>
         Favorite Jobs
       </Typography>
+      <GradioClientComponent/>
       <Grid container spacing={2}>
         {favorites.map((job) => (
           <Grid item xs={12} key={job.id}>

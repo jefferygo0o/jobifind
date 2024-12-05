@@ -18,8 +18,7 @@ import {
 } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { fetchJobData } from "../utils/api";
-import { applyForJob, getAppliedJobs } from "../utils/firebase";
+import { fetchJobData, applyForJob, getAppliedJobs } from "../utils/api";
 
 const JobSearchPage = () => {
   const [filters, setFilters] = useState({

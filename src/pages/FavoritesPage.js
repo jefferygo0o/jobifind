@@ -8,7 +8,7 @@ import {
   Grid,
 } from "@mui/material";
 import { getFavorites, removeFavoriteJob } from "../utils/firebase";
-import GradioClientComponent from "../components/GradioClientComponent"
+import GradioClientComponent from "../components/GradioClient"
 const FavoritesPage = () => {
   const [favorites, setFavorites] = useState([]);
 
